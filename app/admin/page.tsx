@@ -12,34 +12,60 @@ export default function AdminPage() {
 
     const fetchGyms = async () => {
 
-  try{
+        try {
 
-    const token = localStorage.getItem("token")
+            const token = localStorage.getItem("token")
 
-    const res = await fetch("/api/admin/gyms",{
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    })
+            const res = await fetch("/api/admin/gyms", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
 
-    const data = await res.json()
+            const data = await res.json()
 
-    console.log("GYMS:", data)
+            console.log("GYMS:", data)
 
-    if(Array.isArray(data)){
-      setGyms(data)
-    }else if(Array.isArray(data.gyms)){
-      setGyms(data.gyms)
-    }else{
-      setGyms([])
+            if (Array.isArray(data)) {
+                setGyms(data)
+            } else if (Array.isArray(data.gyms)) {
+                setGyms(data.gyms)  
+            } else {
+                setGyms([])
+            }
+
+        } catch (error) {
+            console.error(error)
+            setGyms([])
+        }
+
     }
 
-  }catch(error){
-    console.error(error)
-    setGyms([])
-  }
+    const activateSubscription = async (gymId: string) => {
 
-}
+        try {
+
+            const token = localStorage.getItem("token")
+
+            await fetch("/api/admin/activate-subscription", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ gymId })
+            })
+
+            alert("Suscripción activada por 1 mes")
+
+            fetchGyms()
+
+        } catch (error) {
+            console.error(error)
+            alert("Error activando suscripción")
+        }
+
+    }
 
     return (
 
@@ -71,6 +97,13 @@ export default function AdminPage() {
                             <p className="text-gray-400">
                                 Suscripciones: {gym.subscriptions.length}
                             </p>
+
+                            <button
+                                onClick={() => activateSubscription(gym.id)}
+                                className="mt-4 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg"
+                            >
+                                Activar suscripción (1 mes)
+                            </button>
 
                         </div>
 
