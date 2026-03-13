@@ -266,25 +266,6 @@ function DashboardContent() {
     // Guardamos el gimnasio
     setGym(data)
 
-    // 🔴 VERIFICAR SUSCRIPCIÓN
-    if (!data.subscription_active) {
-      window.location.href = "/subscription-expired"
-      return
-    }
-
-    // 🔴 VERIFICAR FECHA DE VENCIMIENTO
-    if (data.subscription_end) {
-
-      const today = new Date()
-      const endDate = new Date(data.subscription_end)
-
-      if (today > endDate) {
-        window.location.href = "/subscription-expired"
-        return
-      }
-
-    }
-
   }
 
   const renewMember = async (
