@@ -29,12 +29,15 @@ export default function SubscriptionExpired() {
 
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 text-sm text-gray-300 mb-6">
 
-          Realiza tu pago por transferencia y envía tu comprobante.
+          Realiza tu pago por transferencia y envía tu comprobante al contacto.
 
           <br /><br />
 
           Banco: BBVA <br />
-          CLABE: TU_CLABE_AQUI
+          Titular: Gerardo Canseco
+          Nro. Tarjeta: 4152 3142 0258 6478
+          Concepto: Suscripcion Nombre_del_Gimnasio
+
 
         </div>
 
@@ -48,7 +51,7 @@ export default function SubscriptionExpired() {
           </button>
 
           <button
-            onClick={() => window.location.href = "https://wa.me/TU_NUMERO"}
+            onClick={() => window.location.href = "/billing"}
             className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-semibold transition"
           >
             Enviar comprobante
