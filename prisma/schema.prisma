@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gym {
+  id      String  @id @default(cuid())
+  name    String
+  phone   String?
+  address String?
+  logo    String?
+
+  priceDay   Int @default(50)
+  priceMonth Int @default(500)
+  priceYear  Int @default(5000)
+  pricePromo Int @default(0)
+
+  users         User[]
+  members       Member[]
+  payments      Payment[]
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  Staff     Staff[]
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  role     Role   @default(STAFF)
+
+  gymId String
+  gym   Gym    @relation(fields: [gymId], references: [id])
+}
+
+enum Role {
+  OWNER
+  STAFF
+}
+
+model Member {
+  id String @id @default(uuid())
+
+  name String
+
+  firstName      String?
+  lastName       String?
+  secondLastName String?
+  phone          String?
+
+  email     String?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  gymId String
+
+  isActive Boolean @default(true)
+
+  gym Gym @relation(fields: [gymId], references: [id])
+
+  payments Payment[]
+  checkins Checkin[]
+
+  @@unique([gymId, firstName, lastName, secondLastName])
+}
+
+model Staff {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("STAFF")
+  gymId     String
+  gym       Gym      @relation(fields: [gymId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  amount    Float
+  planType  String
+  method    String
+  startDate DateTime @default(now())
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  gymId String
+  gym   Gym    @relation(fields: [gymId], references: [id])
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  gymId     String
+  plan      String
+  status    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  gym Gym @relation(fields: [gymId], references: [id])
+}
+
+model Checkin {
+  id        String   @id @default(uuid())
+  memberId  String
+  gymId     String
+  createdAt DateTime @default(now())
+
+  member Member @relation(fields: [memberId], references: [id])
+
+  @@index([memberId])
+  @@index([gymId])
+}
