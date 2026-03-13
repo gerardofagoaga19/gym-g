@@ -26,6 +26,7 @@ model Gym {
 
   createdAt DateTime @default(now())
   Staff     Staff[]
+  subscriptionExpiresAt DateTime?
 }
 
 model User {
