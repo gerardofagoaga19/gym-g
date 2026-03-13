@@ -10,7 +10,8 @@ import { checkSubscription } from "@/lib/checkSubscription";
 // =======================
 export async function GET(req: Request) {
   try {
-    const headersList = await headers();
+
+    const headersList = await headers()
     const authHeader = headersList.get("authorization");
 
     if (!authHeader) {
@@ -18,7 +19,13 @@ export async function GET(req: Request) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const user = verifyToken(token);
+
+    let user;
+    try {
+      user = verifyToken(token);
+    } catch (err) {
+      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    }
 
     if (!user) {
       return NextResponse.json({ error: "Token inválido" }, { status: 401 });
@@ -34,7 +41,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // 🔴 DESACTIVAR MIEMBROS VENCIDOS AUTOMÁTICAMENTE
+    // 🔴 Desactivar miembros vencidos automáticamente
     await prisma.member.updateMany({
       where: {
         gymId: user.gymId,
@@ -48,34 +55,32 @@ export async function GET(req: Request) {
       },
     });
 
-    // obtener parametro de búsqueda
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
 
     const members = await prisma.member.findMany({
-  where: {
-    gymId: user.gymId,
-    name: {
-      contains: search,
-      mode: "insensitive",
-    },
-  },
-
-  include: {
-    checkins: {
-      orderBy: {
-        createdAt: "desc"
-      }
-    }
-  },
-
-  orderBy: { createdAt: "desc" },
-});
+      where: {
+        gymId: user.gymId,
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      include: {
+        checkins: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
     return NextResponse.json(members);
 
   } catch (error) {
     console.error("GET ERROR:", error);
+
     return NextResponse.json(
       { error: "Error al obtener miembros" },
       { status: 500 }
@@ -89,7 +94,8 @@ export async function GET(req: Request) {
 // =======================
 export async function POST(req: Request) {
   try {
-    const headersList = await headers();
+
+    const headersList = await headers()
     const authHeader = headersList.get("authorization");
 
     if (!authHeader) {
@@ -97,13 +103,21 @@ export async function POST(req: Request) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const user = verifyToken(token);
+
+    let user;
+    try {
+      user = verifyToken(token);
+    } catch (err) {
+      return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    }
 
     if (!user) {
       return NextResponse.json({ error: "Token inválido" }, { status: 401 });
     }
 
+    // 🔥 Validar suscripción
     const hasAccess = await checkSubscription(user.gymId);
+
     if (!hasAccess) {
       return NextResponse.json(
         { error: "Suscripción vencida" },
@@ -111,7 +125,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const { firstName, lastName, secondLastName, phone, planType } = await req.json();
+    // 🔥 Leer body seguro
+    const body = await req.json();
+
+    const {
+      firstName,
+      lastName,
+      secondLastName,
+      phone,
+      planType
+    } = body;
 
     if (!firstName || !lastName || !secondLastName || !planType) {
       return NextResponse.json(
@@ -124,7 +147,7 @@ export async function POST(req: Request) {
     let newExpireDate = new Date(now);
     let amount = 0;
 
-    // 🔥 LÓGICA REAL DE PLANES
+    // 🔥 Lógica de planes
     if (planType === "DAY") {
       newExpireDate.setDate(newExpireDate.getDate() + 1);
       amount = 50;
@@ -161,23 +184,23 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1️⃣ Crear miembro
     const fullName = `${firstName} ${lastName} ${secondLastName}`;
 
+    // 🔥 Crear miembro
     const member = await prisma.member.create({
       data: {
         name: fullName,
         firstName,
         lastName,
         secondLastName,
-        phone,
+        phone: phone || null,
         gymId: user.gymId,
         expiresAt: newExpireDate,
         isActive: true,
       },
     });
 
-    // 2️⃣ Crear pago automático
+    // 🔥 Registrar pago automático
     await prisma.payment.create({
       data: {
         memberId: member.id,
@@ -194,6 +217,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error("POST ERROR:", error);
+
     return NextResponse.json(
       { error: "Error al crear miembro" },
       { status: 500 }
