@@ -48,8 +48,16 @@ export default function LoginPage() {
 
     <div className="p-10 text-white">
 
+      {/* BOTON VOLVER */}
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="mb-6 px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600"
+      >
+        ← Volver al menú principal
+      </button>
+
       <h1 className="text-3xl mb-6">
-        Iniciar sesión
+        Login empleados
       </h1>
 
       <input
