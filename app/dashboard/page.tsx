@@ -427,12 +427,12 @@ function DashboardContent() {
             )}
 
             <h1 className="title-dashboard">
-              {gym?.name || "Mi gimnasio"}
+              Panel de control
             </h1>
           </div>
 
           <div className="bg-slate-800 px-4 py-2 rounded-lg text-sm">
-            Admin
+            Administrador
           </div>
         </div>
 

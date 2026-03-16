@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "GYM-G | Sistema para Gimnasios",
-  description: "Sistema de administración para gimnasios",
+description: "Software para administrar gimnasios",
 };
 
 export default function RootLayout({
