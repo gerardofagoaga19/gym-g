@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { Users, CreditCard, Settings, User, LayoutDashboard } from "lucide-react"
 
 export default function AnimatedLayout({ children }: { children: React.ReactNode }) {
 
@@ -22,22 +23,25 @@ export default function AnimatedLayout({ children }: { children: React.ReactNode
 
                     <button
                         onClick={() => router.push("/dashboard")}
-                        className="block w-full text-left hover:text-white text-gray-400"
+                        className="flex items-center gap-2 hover:text-white text-gray-400"
                     >
+                        <LayoutDashboard size={18} />
                         Dashboard
                     </button>
 
                     <button
                         onClick={() => router.push("/members")}
-                        className="block w-full text-left hover:text-white text-gray-400"
+                        className="flex items-center gap-2 hover:text-white text-gray-400"
                     >
+                        <Users size={18} />
                         Miembros
                     </button>
 
                     <button
                         onClick={() => router.push("/payments")}
-                        className="block w-full text-left hover:text-white text-gray-400"
+                        className="flex items-center gap-2 hover:text-white text-gray-400"
                     >
+                        <CreditCard size={18} />
                         Pagos
                     </button>
 
@@ -50,8 +54,9 @@ export default function AnimatedLayout({ children }: { children: React.ReactNode
 
                     <button
                         onClick={() => router.push("/staff")}
-                        className="block w-full text-left hover:text-white text-gray-400"
+                        className="flex items-center gap-2 hover:text-white text-gray-400"
                     >
+                        <User size={18} />
                         Empleados
                     </button>
 

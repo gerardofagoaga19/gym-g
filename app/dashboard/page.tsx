@@ -357,12 +357,6 @@ function DashboardContent() {
 
           <nav className="space-y-4 text-gray-400 text-sm">
             <button
-              onClick={() => router.push("/dashboard")}
-              className="mb-6 px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600"
-            >
-              ← Menú principal
-            </button>
-            <button
               onClick={() => router.push("/members")}
               className="block w-full text-left hover:text-white transition hover:translate-x-1"
             >
