@@ -10,7 +10,16 @@ const router = useRouter()
 const [payments,setPayments] = useState<any[]>([])
 
 useEffect(()=>{
+
+const token = localStorage.getItem("token")
+
+if(!token){
+window.location.href="/login"
+return
+}
+
 fetchPayments()
+
 },[])
 
 const fetchPayments = async () => {
@@ -42,8 +51,8 @@ className="mb-6 px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600"
 ← Volver al menú principal
 </button>
 
-<h1 className="text-2xl font-bold mb-6">
-Historial de pagos
+<h1 className="text-2xl font-bold mb-6 text-white">
+💳 Historial de pagos
 </h1>
 
 <div className="space-y-3">
